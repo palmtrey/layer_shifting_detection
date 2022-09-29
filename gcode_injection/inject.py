@@ -37,7 +37,7 @@ MAX_HEIGHT = LAYER_HEIGHT * NUM_LAYERS    # The maximum layer height of the prin
 # Generate random data
 layer_z = round(random.uniform(MIN_HEIGHT, MAX_HEIGHT), 1)
 
-while round(int(layer_z *10) % 2) != 0:
+while round(int(layer_z *10) % LAYER_HEIGHT*10) != 0:
     layer_z = round(random.uniform(1, 10), 1)
 
 # If layer_z is an integer, make it an integer (for gcode formatting purposes)
@@ -63,6 +63,8 @@ for idx, line in enumerate(gcode):
     if 'Z:' + str(layer_z) in line:
         layer_line = idx
         break
+
+print(layer_line)
 
 # print(layer_line)
 # print(gcode[layer_line])
