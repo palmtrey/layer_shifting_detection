@@ -16,24 +16,26 @@ random.seed(a=None, version=2)
 
 parser = argparse.ArgumentParser(description='Injects layer shifting GCODE into a file.')
 parser.add_argument('input_filename', metavar='inp_file', type=str, help='input gcode file')
-parser.add_argument('output_filename', metavar='out_file', type=str, help='output gcode file')
 
 args = parser.parse_args()
 
 input_file = args.input_filename
-output_file = args.output_filename
 
 # Define some constants
 SHIFT_AMOUNT_LOW = 2
 SHIFT_AMOUNT_HIGH = 5
 
-LAYER_Z_LOW = 1
-MAX_HEIGHT = 30    # The maximum layer height of the print
+NUM_LAYERS = 100
 
-LAYER_HEIGHT = 0.2 # The layer height of the print in mm
+LAYER_HEIGHT = 0.3 # The layer height of the print in mm
+
+MIN_HEIGHT = LAYER_HEIGHT * 4
+MAX_HEIGHT = LAYER_HEIGHT * NUM_LAYERS    # The maximum layer height of the print
+
+
 
 # Generate random data
-layer_z = round(random.uniform(LAYER_Z_LOW, MAX_HEIGHT), 1)
+layer_z = round(random.uniform(MIN_HEIGHT, MAX_HEIGHT), 1)
 
 while round(int(layer_z *10) % 2) != 0:
     layer_z = round(random.uniform(1, 10), 1)
@@ -43,9 +45,11 @@ if int(layer_z) == float(layer_z):
     layer_z = int(layer_z)
 
 direction = 'X' if random.random() > 0.5 else 'Y'  # Direction to shift in, either X or Y
+add_sub = 'add' if random.random() > 0.5 else 'sub' # Indicator whether or not to add or subtract the shift amount
 
 shift_amount = round(random.uniform(SHIFT_AMOUNT_LOW, SHIFT_AMOUNT_HIGH), 2)
-
+if add_sub == 'add':
+    shift_amount = -1 * shift_amount
 
 # Open GCODE and parse
 gcode = ''
@@ -70,10 +74,11 @@ last_x_value = gcode[layer_line-2][X_index+1:space_index]
 
 gcode.insert(layer_line + 1, ';----- INJECTED GCODE BEGINS HERE -----\n')
 gcode.insert(layer_line + 2, ';Layer shift: layer Z=' + str(layer_z) + 'mm, direction=' + str(direction) + ', amt=' + str(shift_amount) + 'mm\n')
-gcode.insert(layer_line + 3, 'G1 ' + direction + str(float(last_x_value)-shift_amount) + '\n')
+gcode.insert(layer_line + 3, 'G1 ' + direction + str(float(last_x_value) + shift_amount) + '\n')
 gcode.insert(layer_line + 4, 'G92 ' + direction + last_x_value + '\n')
 gcode.insert(layer_line + 5, ";----- INJECTED GCODE ENDS HERE-----\n")
 
+output_file = 'Z' + str(layer_z) + '-' + str(direction) + '-' + str(shift_amount) + '.gcode'
 
 with open(output_file, 'w') as f:
     f.writelines(gcode)
