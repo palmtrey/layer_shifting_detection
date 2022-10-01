@@ -4,15 +4,10 @@ import numpy as np
 import os
 from tqdm import tqdm
 
-<<<<<<< Updated upstream:data_processing/crop.py
-DATA_PATH = './spaghetti_cap_sept28_10s'
-OUTPUT_PATH = './spaghetti_cap_sept28_10s_cropped'
-=======
 DATA_PATH = '/home/cameron/Documents/image_data/original/shift_cap_sept29_10s'
 OUTPUT_PATH = '/home/cameron/Documents/image_data/cropped/shift_cap_sept29_10s_cropped'
 SCALED_IMAGE_SIZE = (224, 224)
 
->>>>>>> Stashed changes:data_processing/cropandscale.py
 top_bound = int(2464/2 - 150)
 bottom_bound = int(2464/2 + 200)
 left_bound = int(3280/2 - 200)
