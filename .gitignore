@@ -4,5 +4,6 @@ data_processing/venv
 ultimaker_data_collection/venv
 data_processing/crack_test_images
 data_processing/correct_sept29_0
+data_processing/correct_sept29_0_aug
 model/data/
 model/venv
