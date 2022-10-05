@@ -2,8 +2,6 @@ ender3v2_data_collection/data_capture/client_secrets.json
 cnn_example/venv
 data_processing/venv
 ultimaker_data_collection/venv
-data_processing/crack_test_images
-data_processing/correct_sept29_0
-data_processing/correct_sept29_0_aug
+data_processing/data
 model/data/
 model/venv
