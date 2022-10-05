@@ -8,6 +8,9 @@ DATA_PATH = '/home/cameron/Documents/image_data/original/shift_cap_sept29_10s'
 OUTPUT_PATH = '/home/cameron/Documents/image_data/cropped/shift_cap_sept29_10s_cropped'
 SCALED_IMAGE_SIZE = (224, 224)
 
+# Top to bottom: 1082 to 1432
+# Left to right: 1440 to 1790
+
 top_bound = int(2464/2 - 150)
 bottom_bound = int(2464/2 + 200)
 left_bound = int(3280/2 - 200)
