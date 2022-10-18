@@ -10,8 +10,8 @@ import torchvision.transforms as T
 import time
 from tqdm import tqdm
 
-DATA_PATH = 'correct_sept29_0/'
-OUTPUT_PATH = 'correct_sept29_0_aug/'
+DATA_PATH = '../model/data/shift_oct3_11/'
+OUTPUT_PATH = '../model/data/shift_oct3_11_aug/'
 CROP_BOUNDARIES = (400, 400)
 FINAL_CROP = 350                     # Final size of square crop in pixels
 OUTPUT_SIZE = (224, 224)
@@ -34,7 +34,7 @@ for file in tqdm(os.listdir(DATA_PATH)):
     for trans in range(NUM_TRANSLATIONS):
         # Crop original image and save
         crop_orig = T.CenterCrop(CROP_BOUNDARIES)(T.ToTensor()(orig_img))
-        crop_orig = T.RandomCrop(350)(crop_orig)
+        crop_orig = T.RandomCrop(FINAL_CROP)(crop_orig)
 
         # Resize the cropped image
         crop_orig = T.Resize(OUTPUT_SIZE)(crop_orig)

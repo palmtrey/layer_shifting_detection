@@ -12,6 +12,7 @@ import torch.backends.cudnn as cudnn
 import numpy as np
 import torchvision
 from torchvision import datasets, models, transforms
+from torchvision.models import resnet
 import matplotlib
 matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
@@ -20,8 +21,8 @@ import os
 import copy
 from tqdm import tqdm
 
-
-
+DATA_DIR = 'data/phase_1_labeled'
+EPOCHS = 2
 
 def imshow(inp, title=None):
     """Imshow for Tensor."""
@@ -124,9 +125,9 @@ if __name__ == '__main__':
     }
 
 
-    #
+    
     # Transforms for sample dataset
-    #
+    
     # data_transforms = {
     #     'train': transforms.Compose([
     #         transforms.RandomResizedCrop(224),
@@ -142,7 +143,7 @@ if __name__ == '__main__':
     #     ]),
     # }
 
-    DATA_DIR = 'data/phase_1_labeled'
+    
 
     image_datasets = {x: datasets.ImageFolder(os.path.join(DATA_DIR, x),
                                             data_transforms[x])
@@ -152,8 +153,10 @@ if __name__ == '__main__':
                 for x in ['train', 'val']}
     dataset_sizes = {x: len(image_datasets[x]) for x in ['train', 'val']}
     class_names = image_datasets['train'].classes
+    print('Classes: ' + str(class_names))
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    print('Device: ' + str(device))
 
     # Get a batch of training data
     inputs, classes = next(iter(dataloaders['train']))
@@ -167,7 +170,7 @@ if __name__ == '__main__':
 
     # Train the model
 
-    model_ft = models.resnet18(pretrained=True)
+    model_ft = models.resnet18(weights=resnet.ResNet18_Weights.IMAGENET1K_V1)
     num_ftrs = model_ft.fc.in_features
     # Here the size of each output sample is set to 2.
     # Alternatively, it can be generalized to nn.Linear(num_ftrs, len(class_names)).
@@ -185,4 +188,7 @@ if __name__ == '__main__':
 
 
     model_ft = train_model(model_ft, criterion, optimizer_ft, exp_lr_scheduler,
-                       num_epochs=25)
+                       num_epochs=EPOCHS)
+
+    torch.save(model_ft.state_dict(), 'trained_model_phase1.pickle')
+
