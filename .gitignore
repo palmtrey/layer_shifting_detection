@@ -1,6 +1,3 @@
 ender3v2_data_collection/data_capture/client_secrets.json
-cnn_example/venv
-data_processing/venv
-ultimaker_data_collection/venv
-model/venv
 data/
+env/
