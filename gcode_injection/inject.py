@@ -5,9 +5,6 @@
 # Last Modified: September 22nd, 2022
 
 # STATUS: Successfully injects layer shifting gcode in a single direction into a gcode file.
-# NOTE: Layer shifting, practically, can happen in both the X and Y direction at the same time.
-#       Also, multiple layer shifts can happen in the same print. This adds additional variables
-#       to the overall error detection process, and should be considered in future studies.
 
 import argparse
 from time import time

@@ -69,22 +69,3 @@ for file in tqdm(os.listdir(DATA_PATH)):
 
 
 
-
-# padding = (left, top, right, bottom)
-
-cropped_img = T.CenterCrop(CROP_BOUNDARIES)(T.ToTensor()(orig_img))
-cropped_img = T.RandomCrop(350)(cropped_img)
-
-
-cropped_img = T.ToPILImage()(cropped_img)
-cropped_img.save('cropped_img.png')
-
-# f, (ax1, ax2) = plt.subplots(1, 2)
-
-# # ax1.imshow(orig_img)
-# ax1.set_xlabel('Original Image')
-
-# ax2.imshow(cropped_img)
-# ax2.set_xlabel('Rotated Image')
-
-# plt.savefig('out.png')

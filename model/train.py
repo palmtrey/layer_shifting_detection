@@ -1,5 +1,7 @@
-# License: BSD
-# Author: Sasank Chilamkurthy
+# Title: train.py
+# Purpose: Trains ResNet18 given a data directory, number of epochs, and output weights file.
+# Author: Cameron Palmer, campalme@clarkson.edu
+# Last Modified: October 19th, 2022
 # Code adapted from https://pytorch.org/tutorials/beginner/transfer_learning_tutorial.html
 
 from __future__ import print_function, division
@@ -14,30 +16,15 @@ import torchvision
 from torchvision import datasets, models, transforms
 from torchvision.models import resnet
 import matplotlib
-matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import time
 import os
 import copy
 from tqdm import tqdm
 
-DATA_DIR = 'data/phase_1_labeled'
-EPOCHS = 2
-
-def imshow(inp, title=None):
-    """Imshow for Tensor."""
-    inp = inp.numpy().transpose((1, 2, 0))
-    mean = np.array([0.485, 0.456, 0.406])
-    std = np.array([0.229, 0.224, 0.225])
-    inp = std * inp + mean
-    inp = np.clip(inp, 0, 1)
-    plt.imshow(inp)
-    if title is not None:
-        plt.title(title)
-    plt.pause(100)  # pause a bit so that plots are updated
-
-
-
+DATA_DIR = 'data/phase_2_labeled'
+EPOCHS = 1
+OUTPUT_WEIGHTS_FILE = 'trained_model_phase2.pickle'
 
 
 def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
@@ -123,27 +110,7 @@ if __name__ == '__main__':
             transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
         ]),
     }
-
-
-    
-    # Transforms for sample dataset
-    
-    # data_transforms = {
-    #     'train': transforms.Compose([
-    #         transforms.RandomResizedCrop(224),
-    #         transforms.RandomHorizontalFlip(),
-    #         transforms.ToTensor(),
-    #         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
-    #     ]),
-    #     'val': transforms.Compose([
-    #         transforms.Resize(256),
-    #         transforms.CenterCrop(224),
-    #         transforms.ToTensor(),
-    #         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
-    #     ]),
-    # }
-
-    
+ 
 
     image_datasets = {x: datasets.ImageFolder(os.path.join(DATA_DIR, x),
                                             data_transforms[x])
@@ -164,13 +131,11 @@ if __name__ == '__main__':
     # Make a grid from batch
     out = torchvision.utils.make_grid(inputs)
 
-    # imshow(out, title=[class_names[x] for x in classes])
-
 
 
     # Train the model
 
-    model_ft = models.resnet18(weights=resnet.ResNet18_Weights.IMAGENET1K_V1)
+    model_ft = models.resnet18(pretrained=True)
     num_ftrs = model_ft.fc.in_features
     # Here the size of each output sample is set to 2.
     # Alternatively, it can be generalized to nn.Linear(num_ftrs, len(class_names)).
@@ -190,5 +155,5 @@ if __name__ == '__main__':
     model_ft = train_model(model_ft, criterion, optimizer_ft, exp_lr_scheduler,
                        num_epochs=EPOCHS)
 
-    torch.save(model_ft.state_dict(), 'trained_model_phase1.pickle')
+    torch.save(model_ft.state_dict(), OUTPUT_WEIGHTS_FILE)
 
