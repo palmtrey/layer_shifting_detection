@@ -1,0 +1,14 @@
+
+DATA_DIR: ../_data/phase_2_labeled
+EPOCHS: 1
+OUTPUT_WEIGHTS_FILE: trained_model_phase2_reg0.055.pickle
+REG: 0.055
+Classes: ['no_shift', 'shift']
+Device: cuda:0
+Epoch 0/0
+----------
+train Loss: 0.5849 Acc: 0.6973
+val Loss: 0.7140 Acc: 0.5090
+
+Training complete in 61m 39s
+Best val Acc: 0.509020
