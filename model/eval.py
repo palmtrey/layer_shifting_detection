@@ -9,7 +9,7 @@ from tqdm import tqdm
 
 from layer_shifting_utils.utils import predict
 
-TEST_DIR_PATH = '/home/cameron/Projects/layer_shifting_detection/data/shift_oct3_7' 
+TEST_DIR_PATH = '../_data/phase_2_labeled/val/no_shift' 
 
 files = os.listdir(TEST_DIR_PATH)
 json_file = [x for x in files if x.endswith('.json')][0]
