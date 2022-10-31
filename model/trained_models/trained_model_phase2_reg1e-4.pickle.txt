@@ -1,0 +1,10 @@
+
+Classes: ['no_shift', 'shift']
+Device: cuda:0
+Epoch 0/0
+----------
+train Loss: 0.0164 Acc: 0.9944
+val Loss: 0.5124 Acc: 0.9055
+
+Training complete in 59m 49s
+Best val Acc: 0.905457

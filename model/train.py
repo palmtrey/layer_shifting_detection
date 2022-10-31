@@ -22,10 +22,10 @@ import os
 import copy
 from tqdm import tqdm
 
-DATA_DIR = '../_data/phase_2_labeled'
+DATA_DIR = '../_../_data/phase_2_labeled'
 EPOCHS = 1
-OUTPUT_WEIGHTS_FILE = 'trained_model_phase2_reg1e-4.pickle'
-REG = 1e-4
+OUTPUT_WEIGHTS_FILE = 'resnet34_phase2_reg1e-4.pickle'
+REG = 1e-4REG = 1e-2
 
 def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
     since = time.time()
@@ -110,6 +110,12 @@ if __name__ == '__main__':
     # Initialize metadata file
     with open(OUTPUT_WEIGHTS_FILE + '.txt', 'w') as f:
         f.write('')
+        # Write constants to metadata file
+        f.write('\nDATA_DIR: ' + str(DATA_DIR))
+        f.write('\nEPOCHS: ' + str(EPOCHS))
+        f.write('\nOUTPUT_WEIGHTS_FILE: ' + str(OUTPUT_WEIGHTS_FILE))
+        f.write('\nREG: ' + str(REG))
+    
 
     cudnn.benchmark = True
     plt.ion()   # interactive mode
@@ -154,8 +160,8 @@ if __name__ == '__main__':
 
 
     # Train the model
-
-    model_ft = models.resnet18(pretrained=True)
+    
+    model_ft = models.resnet34(pretrained=True)
     num_ftrs = model_ft.fc.in_features
     # Here the size of each output sample is set to 2.
     # Alternatively, it can be generalized to nn.Linear(num_ftrs, len(class_names)).
