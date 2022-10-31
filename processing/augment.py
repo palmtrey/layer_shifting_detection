@@ -10,8 +10,8 @@ import torchvision.transforms as T
 import time
 from tqdm import tqdm
 
-DATA_PATH = '../model/data/shift_oct3_11/'
-OUTPUT_PATH = '../model/data/shift_oct3_11_aug/'
+DATA_PATH = '../_data/correct_phil_ECEender3v2_cam0_Oct31_0/'
+OUTPUT_PATH = '../_data/correct_phil_ECEender3v2_cam0_Oct31_0_aug/'
 CROP_BOUNDARIES = (400, 400)
 FINAL_CROP = 350                     # Final size of square crop in pixels
 OUTPUT_SIZE = (224, 224)

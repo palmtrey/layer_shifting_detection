@@ -9,18 +9,22 @@ from tqdm import tqdm
 
 from layer_shifting_utils.utils import predict
 
-TEST_DIR_PATH = '../_data/phase_2_labeled/val/no_shift' 
+TEST_DIR_PATH = '../_data/correct_phil_ECEender3v2_cam0_Oct31_0' 
+MODEL_WEIGHTS_PATH = 'trained_models/trained_model_phase2_reg.pickle'
+IMAGE_EXTENSION = '.jpg'
+CORRECT = True # Set this to true if the instance being assessed does not contain an error
+
 
 files = os.listdir(TEST_DIR_PATH)
-json_file = [x for x in files if x.endswith('.json')][0]
-with open(os.path.join(TEST_DIR_PATH, json_file)) as f:
-    img_divide = json.load(f)
+
+if not CORRECT:
+    json_file = [x for x in files if x.endswith('.json')][0]
+    with open(os.path.join(TEST_DIR_PATH, json_file)) as f:
+        img_divide = json.load(f)
 
 
 
-MODEL_WEIGHTS_PATH = 'trained_model_phase1.pickle'
 
-IMAGE_EXTENSION = '.jpg'
 
 
 print('Test directory: ' + TEST_DIR_PATH)
@@ -46,7 +50,9 @@ dir.sort()
 print('\nFetching labels...')
 shift = False
 for img_path in tqdm(dir):
-    if shift == False:
+    if CORRECT:
+        labels.append(0)
+    elif shift == False:
         if img_path != img_divide:
             labels.append(0)
         else:
