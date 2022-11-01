@@ -1,4 +1,4 @@
-# Usage: python divide.py [DATA FOLDER] [PERCENT TRAIN]  [OUTPUT FOLDER]
+# Usage: python divide.py [DATA FOLDER] [PERCENT TRAIN]  [OUTPUT FOLDER] [FILE TYPE]
 
 # PERCENT TRAIN must be an integer in range 0-100
 
