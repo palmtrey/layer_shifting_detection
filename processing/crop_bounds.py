@@ -87,7 +87,7 @@ def crop(img_path):
 
 
 if __name__ == '__main__':
-    FOLDER = '../_data/correct_sept29_0'
+    FOLDER = '../_data/ender_0'
     IMG_EXT = '.jpg'
     IMAGES_TO_CHECK = 5 # The number of images to take cropping data from. These are chosen randomly.
     FINAL_CROP = 350    # Final size of square crop in pixels

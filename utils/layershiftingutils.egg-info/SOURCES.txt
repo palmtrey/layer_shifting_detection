@@ -1,0 +1,5 @@
+setup.py
+layershiftingutils.egg-info/PKG-INFO
+layershiftingutils.egg-info/SOURCES.txt
+layershiftingutils.egg-info/dependency_links.txt
+layershiftingutils.egg-info/top_level.txt

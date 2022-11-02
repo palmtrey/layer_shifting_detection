@@ -157,4 +157,4 @@ def eval_delay(data_path: str, model_weights: str, image_ext: str, output_file: 
 
 
 if __name__ == '__main__':
-    eval_delay('../_data/', '../model/trained_models/trained_model_phase2_reg.pickle', '.jpg', 'results_val.json')
+    eval_delay('../_data/temp', '../model/trained_models/trained_model_phase2_reg.pickle', '.jpg', 'results_val.json')

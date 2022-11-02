@@ -1,7 +1,7 @@
-from distutils.core import setup
+from setuptools import setup
 
-setup(name='layer_shifting_utils',
-      version='1.0',
+setup(name='layershiftingutils',
+      version='1.1',
       description='Utilities for detecting layer shifting on D-FDM 3D printers.',
       author='Cameron Palmer',
       author_email='campalme@clarkson.edu',
