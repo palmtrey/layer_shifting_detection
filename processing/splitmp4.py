@@ -2,13 +2,13 @@ import cv2
 import os
 
 
-INPUT_MP4 = '../_data/mp4s/correct_phil_28m_20221031180938.mp4'
-OUTPUT_DIR = '../_data'
-OUTPUT_FOLDER = 'ender_2'
+INPUT_MP4 = 'E:/automation_dataset/mp4s/Z3.9-X--4.04_20221102144912.mp4'
+OUTPUT_DIR = 'E:/automation_dataset/images'
+OUTPUT_FOLDER = 'ender_3'
 
 
-if not os.path.isdir(OUTPUT_DIR):
-    os.mkdir(OUTPUT_DIR)
+if not os.path.isdir(os.path.join(OUTPUT_DIR, OUTPUT_FOLDER)):
+    os.mkdir(os.path.join(OUTPUT_DIR, OUTPUT_FOLDER))
 
 capture = cv2.VideoCapture(INPUT_MP4)
  
