@@ -4,6 +4,14 @@
 # The output folder is assumed to be in an already existing directory named automation_dataset
 # Example: python rename.py data\correct_sept29_1 ender_20 jpg
 
+# Project Directory should look like the following:
+# Project
+# - automation_dataset
+#   - This is where your output folders will go (ex. ender_19, ender_20). These subfolders will be created for you
+# - data
+#   - This is where your data folders will go (ex. shift_oct1_0)
+# - rename.py
+
 import sys, os, shutil, json, random, csv, argparse
 from pathlib import Path
 
