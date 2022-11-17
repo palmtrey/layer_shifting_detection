@@ -15,4 +15,4 @@ for i in range(220):
 	os.system('mv ' + dtstr + '.jpg ' + OUTPUT_PATH)
 	print('Image captured.')
 	src = path.join(OUTPUT_PATH, dtstr + '.jpg')
-	os.system('scp ' + src + ' aiden@128.153.28.135:/home/images')
+	os.system('sshpass -p uprintwefix1234 scp ' + src + 'oneilaj@128.153.28.135://home/images')
