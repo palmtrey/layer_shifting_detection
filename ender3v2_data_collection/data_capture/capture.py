@@ -18,5 +18,5 @@ for i in range(220):
     os.system('mv ' + dtstr + '.jpg ' + OUTPUT_PATH)
     print('Image captured.')
 
-    client = scp.Client(host='128.153.28.135', user='aiden', password='Ao1eo2aa3!')
+    client = scp.Client(host='128.153.28.135', user='user', password='password')
     client.transfer('/etc/local/' + OUTPUT_PATH + '/' + dtstr, '/etc/remote/'  + OUTPUT_PATH + '/' + dtstr)
