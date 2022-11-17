@@ -49,9 +49,15 @@ if __name__ == '__main__':
         
         shift_detected = bool(utils.predict(model, os.path.join(IMG_DIR, img_path), CENTER))
 
+        if shift_detected:
+            stopPrint()
+
         if printCompletion == 100:
             printAction = "Completed"
             break
         if shift_detected:
             printAction = "Paused"
             break
+
+def stopPrint():
+    print("STOP")
