@@ -33,7 +33,7 @@ if __name__ == '__main__':
     num_ftrs = model.fc.in_features
     model.fc = torch.nn.Linear(num_ftrs, 2)
 
-    model.load_state_dict(torch.load(MODEL_WEIGHTS_PATH, map_location=torch.device('cpu')))
+    model.load_state_dict(torch.load("C:\Users\jflsw\OneDrive\Documents\GitHub\layer_shifting_detection\model\trained_models", map_location=torch.device('cpu')))
     model.eval()
 
 
