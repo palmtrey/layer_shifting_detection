@@ -1,6 +1,7 @@
 from datetime import datetime
-import os, scp
-
+import os
+from paramiko import SSHClient
+from scp import SCPClient
 
 OUTPUT_PATH = './correct_clip_small_2_oct20_0'
 CAP_INTERVAL_MS = 10000
@@ -9,6 +10,10 @@ CAP_INTERVAL_MS = 10000
 if not os.path.isdir(OUTPUT_PATH):
 	os.mkdir(OUTPUT_PATH)
 
+ssh = SSHClient()
+ssh.load_system_host_keys()
+ssh.connect('aiden@128.153.28.135')
+scp = SCPClient(ssh.get_transport())
 
 for i in range(220):
     now = datetime.now()
@@ -18,5 +23,6 @@ for i in range(220):
     os.system('mv ' + dtstr + '.jpg ' + OUTPUT_PATH)
     print('Image captured.')
 
-    client = scp.Client(host='128.153.28.135', user='user', password='password')
-    client.transfer('/etc/local/' + OUTPUT_PATH + '/' + dtstr, '/etc/remote/'  + OUTPUT_PATH + '/' + dtstr)
+	src = path.join(OUTPUT_PATH, dtstr + '.jpg')
+	des = path.join(images, dtstr + '.jpg')
+	scp.put(src, des)
