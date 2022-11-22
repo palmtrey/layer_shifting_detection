@@ -5,26 +5,9 @@ from torchvision.models import resnet
 
 import utils
 
-# Takes inputs from OctoPrint and CNN
-# Currently being set as constants until this is figured out
 shift_detected = False
-printCompletion = 0.0
-printAction = "RUNNING..."
-
 IMG_DIR = '.'
 CENTER = (1556.4, 1542.8) 
-
-
-def display():
-    os.system('cls||clear')
-    if shift_detected:
-        print("Shift detected.")
-    else:
-        print("No shift detected.")
-    print("Print Completion: " + str(printCompletion) + "%")
-    print("Print Action: " + printAction)
-    print("\n\nCtrl+C to end")
-
 
 if __name__ == '__main__':
 
@@ -40,24 +23,17 @@ if __name__ == '__main__':
 
     # Main loop
     while True:
-        display()
-        time.sleep(5)
 
-        # Capture an image
-        img_path = "img.jpg"
-        os.system('libcamera-jpeg -o ' + img_path + '.jpg -t 10 --width 3280 --height 2464 --gain 4 > /dev/null 2>&1')
-        
-        shift_detected = bool(utils.predict(model, os.path.join(IMG_DIR, img_path), CENTER))
+        path = '/images/unprocessed'
+        while (os.stat(path).st_size != 0)
+            images = os.listdir(path)
+            img_path = os.path.join(path, images[0])
 
-        if shift_detected:
-            stopPrint()
+            shift_detected = bool(utils.predict(model, os.path.join(IMG_DIR, img_path), CENTER))
 
-        if printCompletion == 100:
-            printAction = "Completed"
-            break
-        if shift_detected:
-            printAction = "Paused"
-            break
+            if shift_detected:
+                os.system('scp message.txt pi@128.53.134.177:/layer_shifting_detection/SSH/messages')
+                stopPrint()
 
 def stopPrint():
     print("STOP")
