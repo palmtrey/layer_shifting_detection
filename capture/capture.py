@@ -11,8 +11,5 @@ if not os.path.isdir(OUTPUT_PATH):
 for i in range(220):
 	now = datetime.now()
 	dtstr = now.strftime("%Y-%m-%d_%H_%M_%S")
-	os.system('libcamera-jpeg -o ' + dtstr + '.jpg -t ' + str(CAP_INTERVAL_MS) + ' --width 3280 --height 2464 --gain 4 > /dev/null 2>&1')
-	os.system('mv ' + dtstr + '.jpg ' + OUTPUT_PATH)
-	print('Image captured.')
-	src = path.join(OUTPUT_PATH, dtstr + '.jpg')
-	os.system('sshpass -p uprintwefix1234 scp ' + src + 'oneilaj@128.153.28.135://home/images')
+	os.system('raspistill -o ' + dtstr + '.jpg -t ' + str(CAP_INTERVAL_MS) + ' --width 3280 --height 2464')
+	os.system('sshpass -p uprintwefix1234 scp ' + dtstr + 'oneilaj@128.153.28.135:/home/oneilaj/images/unprocessed')
