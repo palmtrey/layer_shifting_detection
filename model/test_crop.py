@@ -26,11 +26,11 @@ print(center)
 
 img.save('test.jpg')
 
-aug = T.RandomRotation(degrees=(-10, 10))(T.ToTensor()(img))
+# aug = T.RandomRotation(degrees=(-10, 10))(T.ToTensor()(img))
 
-aug = TF.crop(T.ToPILImage()(aug), center[1] - CROP_SIZE/2, center[0] - CROP_SIZE/2, CROP_SIZE, CROP_SIZE)
+aug = TF.crop(T.ToTensor()(img), int(center[1] - CROP_SIZE//2), int(center[0] - CROP_SIZE//2), CROP_SIZE, CROP_SIZE)
 
-aug = T.RandomCrop(FINAL_CROP)(T.ToTensor()(aug))
+# aug = T.RandomCrop(FINAL_CROP)(T.ToTensor()(aug))
 
 aug = T.Resize(OUTPUT_SIZE)(aug)
 

@@ -1,3 +1,6 @@
 ender3v2_data_collection/data_capture/client_secrets.json
 _data/
 env/
+model/lightning_logs
+model/logs
+model/wandb

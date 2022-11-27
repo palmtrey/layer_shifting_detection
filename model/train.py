@@ -9,16 +9,28 @@ from dataloader import AutomationDataset
 from torchvision.models.resnet import ResNet18_Weights
 
 from network import ResNetClassifier
+from pytorch_lightning.loggers import WandbLogger, TensorBoardLogger
 
-DEVICE = 0
-BATCH_SIZE = 64
 
-model = ResNetClassifier(num_classes = 2, resnet_version = 18,
-                            optimizer = 'adam', lr = 1e-3).cuda(DEVICE)
+import wandb
+
+DEVICE = 1
+BATCH_SIZE = 10
+LEARNING_RATE = 5e-3
+WEIGHT_DECAY = 1e-4
+EPOCHS = 100
+
+tb_logger = TensorBoardLogger(save_dir="logs/")
+wandb_logger = WandbLogger(project="layer_shifting_detection")
+
+
+
+model = ResNetClassifier(num_classes = 2, resnet_version = 18, batch_size=BATCH_SIZE, epochs=EPOCHS,
+                            optimizer = 'adam', lr = LEARNING_RATE, weight_decay=WEIGHT_DECAY).cuda(DEVICE)
 
 # model = model.load_from_checkpoint(checkpoint_path='/home/campalme/layer_shifting_detection/model/lightning_logs/version_2/checkpoints/epoch=0-step=100.ckpt', num_classes=2, resnet_version=18)
 
-train_data = AutomationDataset('/home/campalme/layer_shifting_detection/model/split_file.json', 
+train_data = AutomationDataset('/home/campalme/layer_shifting_detection/model/split_file7030.json', 
                                 'train')
 
 train_loader = DataLoader(dataset=train_data,
@@ -26,7 +38,7 @@ train_loader = DataLoader(dataset=train_data,
                           num_workers = 8,
                           shuffle = True)
 
-test_data = AutomationDataset('/home/campalme/layer_shifting_detection/model/split_file.json',
+test_data = AutomationDataset('/home/campalme/layer_shifting_detection/model/split_file7030.json',
                               'test')
 
 test_loader = DataLoader(dataset=test_data,
@@ -34,7 +46,7 @@ test_loader = DataLoader(dataset=test_data,
                          num_workers = 8,
                          shuffle = True)
 
-trainer = pl.Trainer(limit_train_batches=100, devices=[DEVICE], accelerator='cuda')
-# trainer.fit(model=model, train_dataloaders=train_loader,val_dataloaders=test_loader)
+trainer = pl.Trainer(max_epochs=EPOCHS, devices=[DEVICE], accelerator='cuda', logger=[tb_logger ,wandb_logger])
+trainer.fit(model=model, train_dataloaders=train_loader,val_dataloaders=test_loader)
 
-trainer.validate(model, dataloaders=test_loader)
+# trainer.validate(model, dataloaders=test_loader)

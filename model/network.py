@@ -17,14 +17,18 @@ from torchvision.datasets import ImageFolder
 from torch.utils.data import DataLoader
 import pytorch_lightning as pl
 
+import wandb
+
 # Here we define a new class to turn the ResNet model that we want to use as a feature extractor
 # into a pytorch-lightning module so that we can take advantage of lightning's Trainer object.
 # We aim to make it a little more general by allowing users to define the number of prediction classes.
 class ResNetClassifier(pl.LightningModule):
-    def __init__(self, num_classes, resnet_version,
+    def __init__(self, num_classes, resnet_version, batch_size, epochs,
                 optimizer='adam', lr=1e-3,
-                transfer=True, tune_fc_only=True):
+                transfer=True, tune_fc_only=True, weight_decay=0):
         super().__init__()
+
+       
 
         self.__dict__.update(locals())
         resnets = {
@@ -33,7 +37,7 @@ class ResNetClassifier(pl.LightningModule):
             152: models.resnet152
         }
         self.lr = lr
-
+        self.weight_decay = weight_decay
         optimizers = {'adam': Adam, 'sgd': SGD}
         self.optimizer = optimizers[optimizer]
         #instantiate loss criterion
@@ -50,11 +54,13 @@ class ResNetClassifier(pl.LightningModule):
                 for param in child.parameters():
                     param.requires_grad = False
 
+        self.save_hyperparameters()
+
     def forward(self, X):
         return self.resnet_model(X)
 
     def configure_optimizers(self):
-        return self.optimizer(self.parameters(), lr=self.lr)
+        return self.optimizer(self.parameters(), lr=self.lr, weight_decay=self.weight_decay)
     
     def training_step(self, batch, batch_idx):
         x, y = batch
@@ -66,8 +72,8 @@ class ResNetClassifier(pl.LightningModule):
         acc = (torch.argmax(y,1) == torch.argmax(preds,1)) \
                 .type(torch.FloatTensor).mean()
         # perform logging
-        self.log("train_loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
-        self.log("train_acc", acc, on_step=True, on_epoch=True, prog_bar=True, logger=True)
+        self.log("train_loss", loss, on_step=True, on_epoch=True, prog_bar=True)
+        self.log("train_acc", acc, on_step=True, on_epoch=True, prog_bar=True)
         return loss
     
     def validation_step(self, batch, batch_idx):
@@ -80,8 +86,8 @@ class ResNetClassifier(pl.LightningModule):
         acc = (torch.argmax(y,1) == torch.argmax(preds,1)) \
                 .type(torch.FloatTensor).mean()
         # perform logging
-        self.log("val_loss", loss, on_epoch=True, prog_bar=True, logger=True)
-        self.log("val_acc", acc, on_epoch=True, prog_bar=True, logger=True)
+        self.log("val_loss", loss, on_epoch=True, prog_bar=True)
+        self.log("val_acc", acc, on_epoch=True, prog_bar=True)
 
     
     def test_step(self, batch, batch_idx):
@@ -94,43 +100,5 @@ class ResNetClassifier(pl.LightningModule):
         acc = (torch.argmax(y,1) == torch.argmax(preds,1)) \
                 .type(torch.FloatTensor).mean()
         # perform logging
-        self.log("test_loss", loss, on_step=True, prog_bar=True, logger=True)
-        self.log("test_acc", acc, on_step=True, prog_bar=True, logger=True)
-
-
-if __name__ == "__main__":
-    parser = ArgumentParser()
-    # Required arguments
-    parser.add_argument("model",
-                        help="""Choose one of the predefined ResNet models provided by torchvision. e.g. 50""",
-                        type=int)
-    parser.add_argument("num_classes", help="""Number of classes to be learned.""", type=int)
-    parser.add_argument("num_epochs", help="""Number of Epochs to Run.""", type=int)
-    parser.add_argument("train_set", help="""Path to training data folder.""", type=Path)
-    parser.add_argument("vld_set", help="""Path to validation set folder.""", type=Path)
-    # Optional arguments
-    parser.add_argument("-ts", "--test_set", help="""Optional test set path.""", type=Path)
-    parser.add_argument("-o", "--optimizer", help="""PyTorch optimizer to use. Defaults to adam.""", default='adam')
-    parser.add_argument("-lr", "--learning_rate", help="Adjust learning rate of optimizer.", type=float, default=1e-3)
-    parser.add_argument("-b", "--batch_size", help="""Manually determine batch size. Defaults to 16.""",
-                        type=int, default=16)
-    parser.add_argument("-tr", "--transfer",
-                        help="""Determine whether to use pretrained model or train from scratch. Defaults to True.""",
-                        action="store_true")
-    parser.add_argument("-to", "--tune_fc_only", help="Tune only the final, fully connected layers.", action="store_true")
-    parser.add_argument("-s", "--save_path", help="""Path to save model trained model checkpoint.""")
-    parser.add_argument("-g", "--gpus", help="""Enables GPU acceleration.""", type=int, default=None)
-    args = parser.parse_args()
-
-    # # Instantiate Model
-    model = ResNetClassifier(num_classes = args.num_classes, resnet_version = args.model,
-                            train_path = args.train_set,vld_path = args.vld_set, test_path = args.test_set,
-                            optimizer = args.optimizer, lr = args.learning_rate,
-                            batch_size = args.batch_size, transfer = args.transfer, tune_fc_only = args.tune_fc_only)
-    # Instantiate lightning trainer and train model
-    trainer_args = {'gpus': args.gpus, 'max_epochs': args.num_epochs}
-    trainer = pl.Trainer(**trainer_args)
-    trainer.fit(model)
-    # Save trained model
-    save_path = (args.save_path if args.save_path is not None else '/') + 'trained_model.ckpt'
-    trainer.save_checkpoint(save_path)
+        self.log("test_loss", loss, on_step=True, prog_bar=True)
+        self.log("test_acc", acc, on_step=True, prog_bar=True)

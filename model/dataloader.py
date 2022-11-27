@@ -9,6 +9,8 @@ import torchvision.transforms as T
 import torchvision.transforms.functional as TF
 import torch
 
+import matplotlib.pyplot as plt
+
 from PIL import Image
 
 CROP_SIZE = 800
@@ -20,12 +22,14 @@ class AutomationDataset(Dataset):
     def __init__(
         self,
         data_dir,
-        phase
+        phase,
+        normalize=True,
+        augment=True
     ):
         self.data_dir = data_dir
         self.phase = phase
-
-        
+        self.normalize = normalize
+        self.augment = augment
 
         self.folder_list = self._read_data(data_dir)[phase]
         
@@ -51,14 +55,21 @@ class AutomationDataset(Dataset):
             center = json.load(f)
 
         
+        # print(center)
+        if self.phase == 'train' and self.augment:
+            aug = T.RandomRotation(degrees=(-10, 10))(T.ToTensor()(img))
+            aug = TF.crop(T.ToPILImage()(aug), center[1] - CROP_SIZE//2, center[0] - CROP_SIZE//2, CROP_SIZE, CROP_SIZE)
+            aug = T.RandomCrop(FINAL_CROP)(T.ToTensor()(aug))
+            aug = T.Resize(OUTPUT_SIZE)(aug)
+            if self.normalize:
+                aug = T.Normalize((0.48232,), (0.23051,))(aug)
+        else:
+            aug = aug = TF.crop(T.ToTensor()(img), int(center[1] - FINAL_CROP//2), int(center[0] - FINAL_CROP//2), FINAL_CROP, FINAL_CROP)
+            aug = T.Resize(OUTPUT_SIZE)(aug)
+            if self.normalize:
+                aug = T.Normalize((0.48232,), (0.23051,))(aug)
         
-
-        aug = T.RandomRotation(degrees=(-10, 10))(T.ToTensor()(img))
-        aug = TF.crop(T.ToPILImage()(aug), center[1] - CROP_SIZE/2, center[0] - CROP_SIZE/2, CROP_SIZE, CROP_SIZE)
-        aug = T.RandomCrop(FINAL_CROP)(T.ToTensor()(aug))
-        aug = T.Resize(OUTPUT_SIZE)(aug)
-        aug = T.Normalize((0.48232,), (0.23051,))(aug)
-        
+        # Labeling data
         if os.path.isfile(os.path.join(img_folder, '_shift.json')):
             with open(os.path.join(img_folder, '_shift.json'), 'r') as f:
                 shift_fn = json.load(f)
@@ -72,9 +83,6 @@ class AutomationDataset(Dataset):
                 label = 0
         else:
             label = 0
-
-        
-
         return (aug, label)
 
     def __len__(self):
