@@ -5,10 +5,10 @@ import random
 random.seed(a=None, version=2)
 
 DATA_DIR = '/media/DATACENTER2/campalme/automation_dataset/images/'
-OUT_FN = 'split_file7030.json'
-TRAIN_SPLIT = 70
+OUT_FN = 'split_file6040.json'
+TRAIN_SPLIT = 60
 VAL_SPLIT = 0
-TEST_SPLIT = 30
+TEST_SPLIT = 40
 # NUMS = list(range(12)) + list(range(15, 21)) + (list(range(66, 78)))
 # NUMS = list(range(12)) + (list(range(66, 78)))
 NUMS = list(range(12)) + list(range(20, 56)) + list(range(58, 79))

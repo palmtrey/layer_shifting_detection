@@ -14,9 +14,6 @@ import torch.backends.cudnn as cudnn
 import numpy as np
 import torchvision
 from torchvision import datasets, models, transforms
-from torchvision.models import resnet
-import matplotlib
-import matplotlib.pyplot as plt
 import time
 import os
 import copy
@@ -118,7 +115,7 @@ if __name__ == '__main__':
     
 
     cudnn.benchmark = True
-    plt.ion()   # interactive mode
+    # plt.ion()   # interactive mode
     #
     # Transforms for layer shifting
     #

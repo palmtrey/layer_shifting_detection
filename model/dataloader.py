@@ -18,26 +18,34 @@ FINAL_CROP = 700
 OUTPUT_SIZE = (224, 224)
 IMG_EXT = '.jpg'
 
+
 class AutomationDataset(Dataset):
     def __init__(
         self,
         data_dir,
         phase,
+        predict=False,
         normalize=True,
-        augment=True
+        augment=True,
     ):
         self.data_dir = data_dir
         self.phase = phase
         self.normalize = normalize
         self.augment = augment
 
-        self.folder_list = self._read_data(data_dir)[phase]
+        if not predict:
+            self.folder_list = self._read_data(data_dir)[phase]
+        else:
+            self.folder_list = [data_dir]
         
         self.data_list = []
-
+        
         for folder in self.folder_list:
             self.data_list += [os.path.join(folder, x) for x in os.listdir(folder) if x.endswith(IMG_EXT)]
+        
+        self.data_list.sort(key=lambda x: int(x.split('.')[0].split('_')[-1]))
 
+        # print(self.data_list)
 
     def _read_data(self, data_fn):
         with open(self.data_dir, "r") as f:
@@ -64,7 +72,7 @@ class AutomationDataset(Dataset):
             if self.normalize:
                 aug = T.Normalize((0.48232,), (0.23051,))(aug)
         else:
-            aug = aug = TF.crop(T.ToTensor()(img), int(center[1] - FINAL_CROP//2), int(center[0] - FINAL_CROP//2), FINAL_CROP, FINAL_CROP)
+            aug = TF.crop(T.ToTensor()(img), int(center[1] - FINAL_CROP//2), int(center[0] - FINAL_CROP//2), FINAL_CROP, FINAL_CROP)
             aug = T.Resize(OUTPUT_SIZE)(aug)
             if self.normalize:
                 aug = T.Normalize((0.48232,), (0.23051,))(aug)

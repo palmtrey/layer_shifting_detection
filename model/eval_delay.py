@@ -12,8 +12,15 @@ import torch
 from torchvision import models, transforms
 from torchvision.models import resnet
 from tqdm import tqdm
+from network import ResNetClassifier
+from dataloader import AutomationDataset
+import pytorch_lightning as pl
+from torch.utils.data import Dataset, DataLoader
 
 from layer_shifting_utils.utils import predict
+
+SPLIT_FILE = '/home/campalme/layer_shifting_detection/model/split_file7030.json'
+DEVICE = 0
 
 def calc_delay(array: list, shift_enc) -> int:
     '''Finds the first index where two of the same values exist in a list.'''
@@ -27,7 +34,21 @@ def calc_delay(array: list, shift_enc) -> int:
     return -1
 
 
-def eval_delay(data_path: str, model_weights: str, image_ext: str, output_file: str) -> float:
+def count_false_preds(array: list, shift_enc) -> int:
+    '''Counts the number of times a false prediction occurs'''
+    
+    false_preds = 0
+
+    old_value = None
+    for idx, val in enumerate(array):
+        if old_value == shift_enc and val == shift_enc:
+            false_preds += 1
+        old_value = val
+
+    return false_preds
+
+
+def eval_delay(folders: str, model_weights: str, image_ext: str, output_file: str) -> float:
     '''Evaluates the layer shift detection delay of a model.
 
     Opens a data folder data_path containing print instance
@@ -56,31 +77,32 @@ def eval_delay(data_path: str, model_weights: str, image_ext: str, output_file: 
 
     
     # Load the model
-    model = models.resnet18(weights=resnet.ResNet18_Weights.IMAGENET1K_V1)
-    num_ftrs = model.fc.in_features
-    model.fc = torch.nn.Linear(num_ftrs, 2)
+    model = ResNetClassifier(resnet_version=18).cuda(DEVICE)
 
-    model.load_state_dict(torch.load(model_weights, map_location=torch.device('cpu')))
+    model = model.load_from_checkpoint(checkpoint_path=model_weights, resnet_version=18)
     model.eval()
 
-
-    folders = os.listdir(data_path)
+    # folders = os.listdir(data_path)
     folders.sort(key=lambda folder: int(folder.split('_')[-1]))
     accuracies = []
     delays = []
+    all_false_preds = []
 
 
     for idx, folder in enumerate(folders):
         print('\n(' + str(idx + 1) + '/' + str(len(folders)) + ') Folder: ' + str(folder))
-        files = os.listdir(os.path.join(data_path, folder))
+        files = os.listdir(folder)
         images = [x for x in files if x.endswith(image_ext)]
-        images.sort()
+        images.sort(key=lambda x: int(x.split('.')[0].split('_')[-1]))
+
+        # print(images)
 
         try:
-            json_file = [x for x in files if x.endswith('.json')][0]
-
-            with open(os.path.join(data_path, folder, json_file)) as f:
+            with open(os.path.join(folder, '_shift.json')) as f:
                 split_name = json.load(f)
+
+            with open(os.path.join(folder, '_center.json')) as f:
+                center = json.load(f)
 
             # 0 denotes no shift, 1 denotes shift
             results = []
@@ -101,42 +123,57 @@ def eval_delay(data_path: str, model_weights: str, image_ext: str, output_file: 
                     labels.append(1)
 
             print('\nRunning tests...')
-            for img_path in tqdm(images):
+            # for img_path in tqdm(images):
 
-                if img_path.endswith(image_ext):
-                    results.append(predict(model, os.path.join(data_path, folder, img_path)))
+            #     if img_path.endswith(image_ext):
+            #         results.append(predict(model, os.path.join(folder, img_path), center))
+
+            predict_data = AutomationDataset(folder, 'train', predict=True)
+
+            predict_loader = DataLoader(dataset=predict_data,
+                          batch_size = 1,
+                          num_workers = 8,
+                          shuffle = False)
+
+            trainer = pl.Trainer(devices=[DEVICE], accelerator='cuda')
+            results = trainer.predict(model=model, dataloaders=predict_loader)
+
+            # print(results)
 
 
             difference = ['' if x == y else 'x' for x,y in zip(results, labels)]
 
             accuracy = difference.count('')/len(difference)
             delay = calc_delay(difference[shift_start:], '')
+            false_preds = count_false_preds(difference[0:shift_start], '')
 
             accuracies.append(accuracy)
             delays.append(delay)
+            all_false_preds.append(false_preds)
 
             print('\nResults for ' + str(folder) + '\n' + '-'*10)
             print('Model Accuracy: ' + str(accuracy))
             print('Model Delay: ' + str(delay))
-        except IndexError:
-            print('json file missing for ' + str(folder) + '. Skipping...')
-
+            print('False Predictions: ' + str(false_preds))
         
+            
 
-        # print('Bona Fide Labels: ' + str(labels[shift_start:]))
-        # print('Predictions: ' + str(results[shift_start:]))
-        # print('')
-        # print('Difference: ' + str(difference[shift_start:]))
+            print('Bona Fide Labels: ' + str(labels))
+            print('Predictions: ' + str(results))
+            # print('')
+            # print('Difference: ' + str(difference[shift_start:]))
 
-        # print(calc_delay(difference[shift_start:], ''))
+            # print(calc_delay(difference[shift_start:], ''))
 
+            
+
+
+
+
+            # break
+        except FileNotFoundError:
+            print('json file missing or this is a correct folder. Skipping...')
         
-
-
-
-
-        # break
-
     accuracy_avg = sum(accuracies)/len(accuracies)
     relevant_delays = [x for x in delays if x != -1]
     delay_avg = sum(relevant_delays)/len(relevant_delays)
@@ -157,4 +194,9 @@ def eval_delay(data_path: str, model_weights: str, image_ext: str, output_file: 
 
 
 if __name__ == '__main__':
-    eval_delay('../_data/temp', '../model/trained_models/trained_model_phase2_reg.pickle', '.jpg', 'results_val.json')
+    with open('split_file7030.json', 'r') as f:
+        split = json.load(f)
+
+    WEIGHTS = '/home/campalme/layer_shifting_detection/model/logs/lightning_logs/version_7/checkpoints/epoch=99-step=89600.ckpt'
+
+    eval_delay(split['train'], WEIGHTS, '.jpg', 'results_val.json')

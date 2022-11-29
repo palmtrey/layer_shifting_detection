@@ -23,7 +23,7 @@ import wandb
 # into a pytorch-lightning module so that we can take advantage of lightning's Trainer object.
 # We aim to make it a little more general by allowing users to define the number of prediction classes.
 class ResNetClassifier(pl.LightningModule):
-    def __init__(self, num_classes, resnet_version, batch_size, epochs,
+    def __init__(self, resnet_version, num_classes=2, batch_size = 10, epochs = 50,
                 optimizer='adam', lr=1e-3,
                 transfer=True, tune_fc_only=True, weight_decay=0):
         super().__init__()
@@ -102,3 +102,11 @@ class ResNetClassifier(pl.LightningModule):
         # perform logging
         self.log("test_loss", loss, on_step=True, prog_bar=True)
         self.log("test_acc", acc, on_step=True, prog_bar=True)
+    
+    def predict_step(self, batch, batch_idx, dataloader_idx=0):
+        x, y = batch
+        # print(len(x.shape))
+        if len(x.shape) == 3:
+            # print(x.unsqueeze(0).shape)
+            x = x.unsqueeze(0)
+        return int(torch.argmax(self(x), 1)[0])
