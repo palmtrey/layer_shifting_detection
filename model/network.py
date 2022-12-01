@@ -12,9 +12,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torchvision.models as models
 from torch.optim import SGD, Adam
-from torchvision import transforms
-from torchvision.datasets import ImageFolder
-from torch.utils.data import DataLoader
 import pytorch_lightning as pl
 
 import wandb

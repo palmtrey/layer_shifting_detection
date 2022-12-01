@@ -17,9 +17,10 @@ import wandb
 DEVICE = 1
 BATCH_SIZE = 10
 LEARNING_RATE = 5e-3
-WEIGHT_DECAY = 1e-4
+WEIGHT_DECAY = 5e-3
 EPOCHS = 100
 SPLIT_FILE = '/home/campalme/layer_shifting_detection/model/split_file7030.json'
+OPTIMIZER = 'sgd'
 
 tb_logger = TensorBoardLogger(save_dir="logs/")
 wandb_logger = WandbLogger(project="layer_shifting_detection")
@@ -27,7 +28,7 @@ wandb_logger = WandbLogger(project="layer_shifting_detection")
 
 
 model = ResNetClassifier(num_classes = 2, resnet_version = 18, batch_size=BATCH_SIZE, epochs=EPOCHS,
-                            optimizer = 'adam', lr = LEARNING_RATE, weight_decay=WEIGHT_DECAY, tune_fc_only=False).cuda(DEVICE)
+                            optimizer = OPTIMIZER, lr = LEARNING_RATE, weight_decay=WEIGHT_DECAY, tune_fc_only=False).cuda(DEVICE)
 
 # model = model.load_from_checkpoint(checkpoint_path='/home/campalme/layer_shifting_detection/model/lightning_logs/version_2/checkpoints/epoch=0-step=100.ckpt', num_classes=2, resnet_version=18)
 

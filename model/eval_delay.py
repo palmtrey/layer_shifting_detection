@@ -21,29 +21,24 @@ from layer_shifting_utils.utils import predict
 
 SPLIT_FILE = '/home/campalme/layer_shifting_detection/model/split_file7030.json'
 DEVICE = 0
+COUNT_TO_PREDICT = 2 # The number of times a prediction has to occur in a row to count as an actual pred
 
 def calc_delay(array: list, shift_enc) -> int:
-    '''Finds the first index where two of the same values exist in a list.'''
+    '''Finds the first index where COUNT_TO_PREDICT of the same values exist in a list.'''
 
-    old_value = None
     for idx, val in enumerate(array):
-        if old_value == shift_enc and val == shift_enc:
-            return idx - 1
-        old_value = val
-
+        if val == shift_enc and array[idx-COUNT_TO_PREDICT+1:idx+1] == [array[idx]] * COUNT_TO_PREDICT:
+            return idx - COUNT_TO_PREDICT+1
     return -1
 
 
 def count_false_preds(array: list, shift_enc) -> int:
     '''Counts the number of times a false prediction occurs'''
-    
+    print(array)
     false_preds = 0
-
-    old_value = None
     for idx, val in enumerate(array):
-        if old_value == shift_enc and val == shift_enc:
+        if val == shift_enc and array[idx-COUNT_TO_PREDICT+1:idx+1] == [array[idx]] * COUNT_TO_PREDICT:
             false_preds += 1
-        old_value = val
 
     return false_preds
 
@@ -145,7 +140,13 @@ def eval_delay(folders: str, model_weights: str, image_ext: str, output_file: st
 
             accuracy = difference.count('')/len(difference)
             delay = calc_delay(difference[shift_start:], '')
-            false_preds = count_false_preds(difference[0:shift_start], '')
+
+            if delay == -1:
+                delay = len(difference)
+
+            false_preds = count_false_preds(results[0:shift_start], 1)
+
+            # print(results[0:shift_start])
 
             accuracies.append(accuracy)
             delays.append(delay)
@@ -160,10 +161,8 @@ def eval_delay(folders: str, model_weights: str, image_ext: str, output_file: st
 
             print('Bona Fide Labels: ' + str(labels))
             print('Predictions: ' + str(results))
-            # print('')
-            # print('Difference: ' + str(difference[shift_start:]))
-
-            # print(calc_delay(difference[shift_start:], ''))
+            print('Bona Fide Labels (starting from shift): ' + str(labels[shift_start:]))
+            print('Predictions (starting from shift): ' + str(results[shift_start:]))
 
             
 
@@ -177,6 +176,7 @@ def eval_delay(folders: str, model_weights: str, image_ext: str, output_file: st
     accuracy_avg = sum(accuracies)/len(accuracies)
     relevant_delays = [x for x in delays if x != -1]
     delay_avg = sum(relevant_delays)/len(relevant_delays)
+    false_preds_avg = sum(all_false_preds)/len(all_false_preds)
 
     print('\n\nAverage Accuracy: ' + str(accuracy_avg))
     print('Average Delay: ' + str(delay_avg))
@@ -186,7 +186,9 @@ def eval_delay(folders: str, model_weights: str, image_ext: str, output_file: st
             'accuracies':accuracies,
             'delays':delays,
             'accuracy_avg':accuracy_avg,
-            'delay_avg':delay_avg
+            'delay_avg':delay_avg,
+            'false_preds':all_false_preds,
+            'false_preds_avg':false_preds_avg
         }
 
     with open(output_file, 'w') as f:
@@ -197,6 +199,6 @@ if __name__ == '__main__':
     with open('split_file7030.json', 'r') as f:
         split = json.load(f)
 
-    WEIGHTS = '/home/campalme/layer_shifting_detection/model/logs/lightning_logs/version_7/checkpoints/epoch=99-step=89600.ckpt'
+    WEIGHTS = '/home/campalme/layer_shifting_detection/model/logs/lightning_logs/version_11/checkpoints/epoch=6-step=6272.ckpt'
 
-    eval_delay(split['train'], WEIGHTS, '.jpg', 'results_val.json')
+    eval_delay(split['test'], WEIGHTS, '.jpg', 'results_val.json')
