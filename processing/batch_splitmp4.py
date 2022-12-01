@@ -2,21 +2,34 @@ import cv2
 import json
 import os
 import shutil
+from tqdm import tqdm
 
 OUTPUT_DIR = 'F:/automation_dataset/images'
 
+<<<<<<< Updated upstream
 INPUT_DIR = 'F:/automation_dataset/mp4s/not_split/voron'
 MP4_FINAL_DIR = 'F:/automation_dataset/mp4s/split'
 FOLDER_NAME = 'voron'
 STARTING_FOLDER_NUM = 3
+=======
+INPUT_DIR = 'F:/automation_dataset/mp4s/not_split/11-08'
+MP4_FINAL_DIR = 'F:/automation_dataset/mp4s/split'
+FOLDER_NAME = 'ender'
+STARTING_FOLDER_NUM = 75
+>>>>>>> Stashed changes
 META_FILE = '_meta.json'
 
 # Metadata constants for batch
 MACHINE = 'CamsVoron2.4'
 CAMERA = 0
 OBJECT = 'phil'
+<<<<<<< Updated upstream
 ERROR = 'none'
 DATE = '11-28-22'
+=======
+ERROR = 'shift'
+DATE = '11-8-22'
+>>>>>>> Stashed changes
 STARTING_DATE_INSTANCE = 0
 
 
@@ -28,7 +41,8 @@ print(dir)
 folder_num = STARTING_FOLDER_NUM - 1
 date_instance = STARTING_DATE_INSTANCE - 1
 
-for mp4 in dir:
+print('Processing...')
+for mp4 in tqdm(dir):
     folder_num += 1
     date_instance += 1
 
@@ -78,7 +92,6 @@ for mp4 in dir:
     frameNr = 0
 
     while (True):
-        print('frame')
         success, frame = capture.read()
     
         if success:

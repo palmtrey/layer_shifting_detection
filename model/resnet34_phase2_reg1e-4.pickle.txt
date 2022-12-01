@@ -1,0 +1,5 @@
+
+DATA_DIR: ../_../_data/phase_2_labeled
+EPOCHS: 1
+OUTPUT_WEIGHTS_FILE: resnet34_phase2_reg1e-4.pickle
+REG: 0.0001

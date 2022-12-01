@@ -67,15 +67,24 @@ print(layer_line)
 # print(layer_line)
 # print(gcode[layer_line])
 
-X_index = gcode[layer_line-2].find(direction)
-space_index = gcode[layer_line-2][X_index:].find(' ') + X_index
 
-last_x_value = gcode[layer_line-2][X_index+1:space_index]
+
+# print(X_index)
+# print(space_index)
+
+try:
+    X_index = gcode[layer_line-2].find(direction)
+    space_index = gcode[layer_line-2][X_index:].find(' ') + X_index
+    last_x_value = float(gcode[layer_line-2][X_index+1:space_index])
+except ValueError:
+    X_index = gcode[layer_line-3].find(direction)
+    space_index = gcode[layer_line-3][X_index:].find(' ') + X_index
+    last_x_value = float(gcode[layer_line-3][X_index+1:space_index])
 
 gcode.insert(layer_line + 1, ';----- INJECTED GCODE BEGINS HERE -----\n')
 gcode.insert(layer_line + 2, ';Layer shift: layer Z=' + str(layer_z) + 'mm, direction=' + str(direction) + ', amt=' + str(shift_amount) + 'mm\n')
-gcode.insert(layer_line + 3, 'G1 ' + direction + str(float(last_x_value) + shift_amount) + '\n')
-gcode.insert(layer_line + 4, 'G92 ' + direction + last_x_value + '\n')
+gcode.insert(layer_line + 3, 'G1 ' + direction + str(last_x_value + shift_amount) + '\n')
+gcode.insert(layer_line + 4, 'G92 ' + direction + str(last_x_value) + '\n')
 gcode.insert(layer_line + 5, ";----- INJECTED GCODE ENDS HERE-----\n")
 
 output_file = 'Z' + str(layer_z) + '-' + str(direction) + '-' + str(shift_amount) + '.gcode'
