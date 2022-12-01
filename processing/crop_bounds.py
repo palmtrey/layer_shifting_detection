@@ -11,7 +11,7 @@ import json
 import numpy as np
 import os
 
-FOLDER = 'E:/automation_dataset/images/ender_12'
+FOLDER = 'F:/automation_dataset/images/voron_3'
 IMG_EXT = '.jpg'
 IMAGES_TO_CHECK = 5 # The number of images to take cropping data from. These are chosen randomly.
 FINAL_CROP = 350    # Final size of square crop in pixels

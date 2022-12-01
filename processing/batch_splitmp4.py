@@ -3,21 +3,21 @@ import json
 import os
 import shutil
 
-OUTPUT_DIR = 'E:/automation_dataset/images'
+OUTPUT_DIR = 'F:/automation_dataset/images'
 
-INPUT_DIR = 'E:/automation_dataset/mp4s/not_split'
-MP4_FINAL_DIR = 'E:/automation_dataset/mp4s/split'
-FOLDER_NAME = 'ender'
-STARTING_FOLDER_NUM = 5
+INPUT_DIR = 'F:/automation_dataset/mp4s/not_split/voron'
+MP4_FINAL_DIR = 'F:/automation_dataset/mp4s/split'
+FOLDER_NAME = 'voron'
+STARTING_FOLDER_NUM = 3
 META_FILE = '_meta.json'
 
 # Metadata constants for batch
-MACHINE = 'ECEender3v2'
+MACHINE = 'CamsVoron2.4'
 CAMERA = 0
 OBJECT = 'phil'
-ERROR = 'shift'
-DATE = '11-2-22'
-STARTING_DATE_INSTANCE = 2
+ERROR = 'none'
+DATE = '11-28-22'
+STARTING_DATE_INSTANCE = 0
 
 
 dir = os.listdir(INPUT_DIR)
