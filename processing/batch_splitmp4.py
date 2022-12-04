@@ -6,31 +6,19 @@ from tqdm import tqdm
 
 OUTPUT_DIR = 'F:/automation_dataset/images'
 
-<<<<<<< Updated upstream
-INPUT_DIR = 'F:/automation_dataset/mp4s/not_split/voron'
+INPUT_DIR = 'F:\\automation_dataset\\mp4s\\not_split\\voron\\camera_1\\shift1201'
 MP4_FINAL_DIR = 'F:/automation_dataset/mp4s/split'
 FOLDER_NAME = 'voron'
-STARTING_FOLDER_NUM = 3
-=======
-INPUT_DIR = 'F:/automation_dataset/mp4s/not_split/11-08'
-MP4_FINAL_DIR = 'F:/automation_dataset/mp4s/split'
-FOLDER_NAME = 'ender'
-STARTING_FOLDER_NUM = 75
->>>>>>> Stashed changes
+STARTING_FOLDER_NUM = 28
 META_FILE = '_meta.json'
 
 # Metadata constants for batch
 MACHINE = 'CamsVoron2.4'
-CAMERA = 0
+CAMERA = 1
 OBJECT = 'phil'
-<<<<<<< Updated upstream
-ERROR = 'none'
-DATE = '11-28-22'
-=======
 ERROR = 'shift'
-DATE = '11-8-22'
->>>>>>> Stashed changes
-STARTING_DATE_INSTANCE = 0
+DATE = '12-1-22'
+STARTING_DATE_INSTANCE = 8
 
 
 dir = os.listdir(INPUT_DIR)
