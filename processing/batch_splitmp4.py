@@ -4,32 +4,20 @@ import os
 import shutil
 from tqdm import tqdm
 
-OUTPUT_DIR = 'F:/automation_dataset/images'
+OUTPUT_DIR = 'E:/automation_dataset/images'
 
-<<<<<<< Updated upstream
-INPUT_DIR = 'F:/automation_dataset/mp4s/not_split/voron'
-MP4_FINAL_DIR = 'F:/automation_dataset/mp4s/split'
-FOLDER_NAME = 'voron'
-STARTING_FOLDER_NUM = 3
-=======
-INPUT_DIR = 'F:/automation_dataset/mp4s/not_split/11-08'
-MP4_FINAL_DIR = 'F:/automation_dataset/mp4s/split'
+INPUT_DIR = 'E:/automation_dataset/mp4s/not_split/ender/camera_3/shiftdec2'
+MP4_FINAL_DIR = 'E:/automation_dataset/mp4s/split'
 FOLDER_NAME = 'ender'
-STARTING_FOLDER_NUM = 75
->>>>>>> Stashed changes
+STARTING_FOLDER_NUM = 86
 META_FILE = '_meta.json'
 
 # Metadata constants for batch
-MACHINE = 'CamsVoron2.4'
-CAMERA = 0
+MACHINE = 'ECEender3v2'
+CAMERA = 3
 OBJECT = 'phil'
-<<<<<<< Updated upstream
-ERROR = 'none'
-DATE = '11-28-22'
-=======
 ERROR = 'shift'
-DATE = '11-8-22'
->>>>>>> Stashed changes
+DATE = '12-2-22'
 STARTING_DATE_INSTANCE = 0
 
 
