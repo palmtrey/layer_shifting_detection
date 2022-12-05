@@ -14,12 +14,12 @@ from pytorch_lightning.loggers import WandbLogger, TensorBoardLogger
 
 import wandb
 
-DEVICE = 1
+DEVICE = 0
 BATCH_SIZE = 10
 LEARNING_RATE = 5e-3
 WEIGHT_DECAY = 5e-3
 EPOCHS = 100
-SPLIT_FILE = '/home/campalme/layer_shifting_detection/model/split_file7030.json'
+SPLIT_FILE = '/home/campalme/layer_shifting_detection/model/split_file7030dec5.json'
 OPTIMIZER = 'sgd'
 
 tb_logger = TensorBoardLogger(save_dir="logs/")

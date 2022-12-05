@@ -1,13 +1,25 @@
 import os
 import pytorch_lightning as pl
 from torch.utils.data import Dataset, DataLoader
+import threading
+import json
 
 from network import ResNetClassifier
 from dataloader import AutomationDataset
 
 DEVICE = 0
-IMAGE_FOLDER = './images'
-WEIGHTS = '/home/campalme/layer_shifting_detection/model/logs/lightning_logs/version_11/checkpoints/epoch=6-step=6272.ckpt'
+IMAGE_FOLDER = '/home/campalme/layer_shifting_detection/model/images'
+WEIGHTS = '/home/campalme/layer_shifting_detection/model/logs/lightning_logs/version_8/checkpoints/epoch=65-step=59136.ckpt'
+
+PI_SERVER = 'pi@128.153.134.177'
+REMOTE_RESULTS = '/home/pi/layer_shifting_detection/model/images'
+
+def upload_results():
+    while True:
+        if os.path.isfile(os.path.join(IMAGE_FOLDER, 'results.json')):
+             os.system('scp ' + os.path.join(IMAGE_FOLDER, 'results.json') + ' ' + str(PI_SERVER) + ':' + str(REMOTE_RESULTS))
+             os.system('rm ' + os.path.join(IMAGE_FOLDER, 'results.json'))
+
 
 if __name__ == '__main__':
 
@@ -16,20 +28,13 @@ if __name__ == '__main__':
     model = model.load_from_checkpoint(checkpoint_path=WEIGHTS, resnet_version=18)
     model.eval()
 
-    predict_data = AutomationDataset(folder, 'train', predict=True)
-
-    predict_loader = DataLoader(dataset=predict_data,
-                          batch_size = 1,
-                          num_workers = 8,
-                          shuffle = False)
-
     trainer = pl.Trainer(devices=[DEVICE], accelerator='cuda')
-    results = trainer.predict(model=model, dataloaders=predict_loader)
     
-
+    upload_thread = threading.Thread(target=upload_results)
+    upload_thread.start()
 
     while True:
-        images = os.listdir(IMAGE_FOLDER)
+        images = [x for x in os.listdir(IMAGE_FOLDER) if x.endswith('.jpg')]
 
         if len(images) != 0:
             for image in images:
@@ -41,6 +46,11 @@ if __name__ == '__main__':
                           shuffle = False)
 
                 results = trainer.predict(model=model, dataloaders=predict_loader)
-                print(results)
+                print(results[0])
 
-                os.system('rm ' + str(os.path.join(IMAGE_FOLDER, image)))
+                with open(os.path.join(IMAGE_FOLDER, 'results.json'), 'w') as f:
+                    json.dump(results[0], f)
+
+                # os.system('rm ' + str(os.path.join(IMAGE_FOLDER, image)))
+
+                os.system('mv ' + str(os.path.join(IMAGE_FOLDER, image)) + ' images_done/')

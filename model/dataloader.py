@@ -39,19 +39,21 @@ class AutomationDataset(Dataset):
             self.data_list = []
             for folder in self.folder_list:
                 self.data_list += [os.path.join(folder, x) for x in os.listdir(folder) if x.endswith(IMG_EXT)]
+            self.data_list.sort(key=lambda x: int(x.split('.')[0].split('_')[-1]))
         elif predict == 1:
             # For batch predicting. Loads data from given folder.
             self.folder_list = [data_dir]
             self.data_list = []
             for folder in self.folder_list:
                 self.data_list += [os.path.join(folder, x) for x in os.listdir(folder) if x.endswith(IMG_EXT)]
+            self.data_list.sort(key=lambda x: int(x.split('.')[0].split('_')[-1]))
         elif predict == 2:
             # For single image predicting. Loads one image given in self.data_dir
             self.data_list = [self.data_dir]
         
-        self.data_list.sort(key=lambda x: int(x.split('.')[0].split('_')[-1]))
+        
 
-        print(self.data_list)
+        # print(self.data_list)
 
     def _read_data(self, data_fn):
         with open(self.data_dir, "r") as f:

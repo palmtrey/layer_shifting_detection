@@ -5,13 +5,11 @@ import random
 random.seed(a=None, version=2)
 
 DATA_DIR = '/media/DATACENTER2/campalme/automation_dataset/images/'
-OUT_FN = 'split_file6040.json'
-TRAIN_SPLIT = 60
+OUT_FN = 'split_file7030dec5.json'
+TRAIN_SPLIT = 70
 VAL_SPLIT = 0
-TEST_SPLIT = 40
-# NUMS = list(range(12)) + list(range(15, 21)) + (list(range(66, 78)))
-# NUMS = list(range(12)) + (list(range(66, 78)))
-NUMS = list(range(12)) + list(range(20, 56)) + list(range(58, 79))
+TEST_SPLIT = 30
+NUMS = list(range(12)) + list(range(20, 56)) + list(range(58, 91))
 
 # print(NUMS)
 # exit()
@@ -67,9 +65,9 @@ out_dict = {'train': train_folders,
 
 
 print('\nActual split: ')
-print('\tTrain: ' + str(len(train_folders)) + ' instances (' + str(round(len(train_folders)/total_folders, 3) * 100) + '%)')
-print('\tValidation: ' + str(len(val_folders)) + ' instances (' + str(round(len(val_folders)/total_folders, 3) * 100) + '%)')
-print('\tTest: ' + str(len(test_folders)) + ' instances (' + str(round(len(test_folders)/total_folders, 3) * 100) + '%)')
+print('\tTrain: ' + str(len(train_folders)) + ' instances (' + str(round(len(train_folders)/total_folders, 2) * 100) + '%)')
+print('\tValidation: ' + str(len(val_folders)) + ' instances (' + str(round(len(val_folders)/total_folders, 2) * 100) + '%)')
+print('\tTest: ' + str(len(test_folders)) + ' instances (' + str(round(len(test_folders)/total_folders, 2) * 100) + '%)')
 print('Total: ' + str(total_folders) + ' instances')
 
 
