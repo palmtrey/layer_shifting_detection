@@ -4,21 +4,21 @@ import os
 import shutil
 from tqdm import tqdm
 
-OUTPUT_DIR = 'F:/automation_dataset/images'
+OUTPUT_DIR = 'E:/automation_dataset/images'
 
-INPUT_DIR = 'F:\\automation_dataset\\mp4s\\not_split\\voron\\camera_1\\shift1201'
-MP4_FINAL_DIR = 'F:/automation_dataset/mp4s/split'
-FOLDER_NAME = 'voron'
-STARTING_FOLDER_NUM = 28
+INPUT_DIR = 'E:/automation_dataset/mp4s/not_split/ender/camera_3/shiftdec2'
+MP4_FINAL_DIR = 'E:/automation_dataset/mp4s/split'
+FOLDER_NAME = 'ender'
+STARTING_FOLDER_NUM = 86
 META_FILE = '_meta.json'
 
 # Metadata constants for batch
-MACHINE = 'CamsVoron2.4'
-CAMERA = 1
+MACHINE = 'ECEender3v2'
+CAMERA = 3
 OBJECT = 'phil'
 ERROR = 'shift'
-DATE = '12-1-22'
-STARTING_DATE_INSTANCE = 8
+DATE = '12-2-22'
+STARTING_DATE_INSTANCE = 0
 
 
 dir = os.listdir(INPUT_DIR)
