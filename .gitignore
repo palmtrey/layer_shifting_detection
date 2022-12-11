@@ -4,3 +4,5 @@ env/
 model/lightning_logs
 model/logs
 model/wandb
+model/images_done
+model/version_8

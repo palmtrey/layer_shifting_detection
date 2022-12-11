@@ -7,9 +7,9 @@ import json
 from network import ResNetClassifier
 from dataloader import AutomationDataset
 
-DEVICE = 0
+DEVICE = 1
 IMAGE_FOLDER = '/home/campalme/layer_shifting_detection/model/images'
-WEIGHTS = '/home/campalme/layer_shifting_detection/model/logs/lightning_logs/version_8/checkpoints/epoch=65-step=59136.ckpt'
+WEIGHTS = '/home/campalme/layer_shifting_detection/model/version_8/checkpoints/epoch=65-step=59136.ckpt'
 
 PI_SERVER = 'pi@128.153.134.177'
 REMOTE_RESULTS = '/home/pi/layer_shifting_detection/model/images'
@@ -52,5 +52,8 @@ if __name__ == '__main__':
                     json.dump(results[0], f)
 
                 # os.system('rm ' + str(os.path.join(IMAGE_FOLDER, image)))
+
+                if not os.path.isdir('./images_done'):
+                    os.makedirs('./images_done', exist_ok=True)
 
                 os.system('mv ' + str(os.path.join(IMAGE_FOLDER, image)) + ' images_done/')
